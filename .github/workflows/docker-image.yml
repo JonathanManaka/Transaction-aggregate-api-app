@@ -2,9 +2,9 @@ name: CI – Build, Test & Push Docker Image
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ dev ]
 
 env:
   REGISTRY: docker.io
