@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: transac-aggr-api-app
+
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  h2:
+    console:
+      enabled: false
+
+server:
+  port: 8080
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:h2:mem:transac_aggr;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  flyway:
+    locations: classpath:db/migration
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+logging:
+  level:
+    org.example.transacaggrapiapp: DEBUG
+
