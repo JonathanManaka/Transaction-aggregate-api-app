@@ -91,3 +91,26 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  update-gitops:
+    name: Update GitOps Manifest
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout gitops repo
+        uses: actions/checkout@v4
+        with:
+          repository: mphojmanaka/Transaction-aggregate-api-gitops
+          token: ${{ secrets.GITOPS_PAT }}
+
+      - name: Update image tag
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          sed -i "s|${{ secrets.DOCKERHUB_USERNAME }}/transac-aggr-api-app:.*|${{ secrets.DOCKERHUB_USERNAME }}/transac-aggr-api-app:${SHORT_SHA}|" k8s/deployment.yml
+          git config user.email "ci@github.com"
+          git config user.name "GitHub Actions"
+          git add k8s/deployment.yml
+          git diff --staged --quiet || git commit -m "chore: update image tag to ${SHORT_SHA}"
+          git push
