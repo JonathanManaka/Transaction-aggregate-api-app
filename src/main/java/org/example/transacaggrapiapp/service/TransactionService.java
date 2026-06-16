@@ -1,16 +1,19 @@
 package org.example.transacaggrapiapp.service;
 
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.example.transacaggrapiapp.aggregator.TransactionAggregator;
 import org.example.transacaggrapiapp.model.Category;
 import org.example.transacaggrapiapp.model.Transaction;
 import org.example.transacaggrapiapp.model.TransactionSummary;
 import org.example.transacaggrapiapp.repository.TransactionRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,7 +38,16 @@ public class TransactionService {
     public List<Transaction> getFilteredTransactions(Category category, LocalDateTime startDate,
                                                      LocalDateTime endDate, BigDecimal minAmount,
                                                      BigDecimal maxAmount) {
-        return transactionRepository.findWithFilters(category, startDate, endDate, minAmount, maxAmount);
+        Specification<Transaction> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (category != null)   predicates.add(cb.equal(root.get("category"), category));
+            if (startDate != null)  predicates.add(cb.greaterThanOrEqualTo(root.get("transactionDate"), startDate));
+            if (endDate != null)    predicates.add(cb.lessThanOrEqualTo(root.get("transactionDate"), endDate));
+            if (minAmount != null)  predicates.add(cb.greaterThanOrEqualTo(root.get("amount"), minAmount));
+            if (maxAmount != null)  predicates.add(cb.lessThanOrEqualTo(root.get("amount"), maxAmount));
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+        return transactionRepository.findAll(spec);
     }
 
     public List<TransactionSummary> getCategorySummaries() {
