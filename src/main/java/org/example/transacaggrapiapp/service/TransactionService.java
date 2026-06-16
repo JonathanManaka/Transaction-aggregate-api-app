@@ -6,6 +6,7 @@ import org.example.transacaggrapiapp.model.Category;
 import org.example.transacaggrapiapp.model.Transaction;
 import org.example.transacaggrapiapp.model.TransactionSummary;
 import org.example.transacaggrapiapp.repository.TransactionRepository;
+import org.example.transacaggrapiapp.repository.TransactionSpecification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,8 @@ public class TransactionService {
     public List<Transaction> getFilteredTransactions(Category category, LocalDateTime startDate,
                                                      LocalDateTime endDate, BigDecimal minAmount,
                                                      BigDecimal maxAmount) {
-        return transactionRepository.findWithFilters(category, startDate, endDate, minAmount, maxAmount);
+        return transactionRepository.findAll(
+                TransactionSpecification.withFilters(category, startDate, endDate, minAmount, maxAmount));
     }
 
     public List<TransactionSummary> getCategorySummaries() {
