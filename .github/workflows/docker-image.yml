@@ -32,15 +32,18 @@ jobs:
       - name: Run integration tests (Testcontainers + Postgres)
         run: ./mvnw test -Dtest=TransactionRepositoryTest --batch-mode --no-transfer-progress
 
+      - name: Package JAR
+        run: ./mvnw package -DskipTests --batch-mode --no-transfer-progress
+
       - name: Upload test reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: surefire-reports
           path: target/surefire-reports/
 
       - name: Upload JAR artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: app-jar
           path: target/transac-aggr-api-app-*.jar
