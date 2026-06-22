@@ -26,8 +26,11 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build & run tests
-        run: ./mvnw clean verify -Dspring.profiles.active=dev --batch-mode --no-transfer-progress
+      - name: Run unit tests (H2)
+        run: ./mvnw test -Dspring.profiles.active=dev --batch-mode --no-transfer-progress
+
+      - name: Run integration tests (Testcontainers + Postgres)
+        run: ./mvnw test -Dtest=TransactionRepositoryTest --batch-mode --no-transfer-progress
 
       - name: Upload test reports
         if: failure()
