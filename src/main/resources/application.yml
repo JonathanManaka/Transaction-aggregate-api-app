@@ -23,7 +23,9 @@ spring:
       enabled: false
 
 temporal:
-  service-address: ${TEMPORAL_ADDRESS:localhost:7233}
+  service-address: ${TEMPORAL_HOST:localhost:7233}
+  worker:
+    enabled: true
 
 server:
   port: 8080
