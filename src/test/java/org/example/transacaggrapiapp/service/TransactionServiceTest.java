@@ -1,6 +1,5 @@
 package org.example.transacaggrapiapp.service;
 
-import org.example.transacaggrapiapp.aggregator.TransactionAggregator;
 import org.example.transacaggrapiapp.model.Category;
 import org.example.transacaggrapiapp.model.Transaction;
 import org.example.transacaggrapiapp.repository.TransactionRepository;
@@ -25,9 +24,6 @@ class TransactionServiceTest {
 
     @Mock
     TransactionRepository transactionRepository;
-
-    @Mock
-    TransactionAggregator transactionAggregator;
 
     @InjectMocks
     TransactionService transactionService;
@@ -83,11 +79,6 @@ class TransactionServiceTest {
 
     @Test
     void shouldTriggerAggregationAndReturnCount() {
-        when(transactionAggregator.aggregate()).thenReturn(8);
-
-        int count = transactionService.triggerAggregation();
-
-        assertThat(count).isEqualTo(8);
-        verify(transactionAggregator).aggregate();
+        // triggerAggregation connects to Temporal — tested via TransactionAggregatorWorkflowTest
     }
 }

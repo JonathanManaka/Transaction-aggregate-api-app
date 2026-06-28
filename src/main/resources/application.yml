@@ -22,6 +22,9 @@ spring:
     console:
       enabled: false
 
+temporal:
+  service-address: ${TEMPORAL_ADDRESS:localhost:7233}
+
 server:
   port: 8080
 

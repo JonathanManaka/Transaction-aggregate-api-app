@@ -10,6 +10,9 @@ public class TransacAggrApiAppApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(TransacAggrApiAppApplication.class, args);
+
+        TransactionAggregatorWorker worker = new TransactionAggregatorWorker();
+        worker.transactionAggregatorWorker();
     }
 
 }
