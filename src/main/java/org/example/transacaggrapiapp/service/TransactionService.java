@@ -2,6 +2,7 @@ package org.example.transacaggrapiapp.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.transacaggrapiapp.InitiateTransactionAggregator;
+
 import org.example.transacaggrapiapp.model.Category;
 import org.example.transacaggrapiapp.model.Transaction;
 import org.example.transacaggrapiapp.model.TransactionSummary;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final InitiateTransactionAggregator initiateTransactionAggregator;
 
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
@@ -62,8 +64,6 @@ public class TransactionService {
 
     @Transactional
     public int triggerAggregation() {
-        InitiateTransactionAggregator initiateTransactionAggregator = new InitiateTransactionAggregator();
-       return initiateTransactionAggregator.initTransactionAggregator();
-
+        return initiateTransactionAggregator.initTransactionAggregator();
     }
 }
