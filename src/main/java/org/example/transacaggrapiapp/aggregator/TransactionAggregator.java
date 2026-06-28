@@ -1,60 +1,48 @@
 package org.example.transacaggrapiapp.aggregator;
 
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.transacaggrapiapp.categoriser.TransactionCategoriser;
+import org.example.transacaggrapiapp.TransactionAggregatorActivity.TransactionAggregatorActivity;
 import org.example.transacaggrapiapp.model.Transaction;
-import org.example.transacaggrapiapp.repository.TransactionRepository;
-import org.example.transacaggrapiapp.source.MockBankAClient;
-import org.example.transacaggrapiapp.source.MockBankBClient;
-import org.springframework.stereotype.Component;
+import org.example.transacaggrapiapp.transactionAggregatorWorkflow.TransactionAggregatorWorkflow;
+import io.temporal.activity.ActivityOptions;
+import io.temporal.workflow.Workflow;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Orchestrates fetching from all sources, normalising, categorising, and persisting.
- */
-@Component
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Slf4j
-public class TransactionAggregator {
+public class TransactionAggregator implements TransactionAggregatorWorkflow {
 
-    private final MockBankAClient bankAClient;
-    private final MockBankBClient bankBClient;
-    private final TransactionNormaliser normaliser;
-    private final TransactionCategoriser categoriser;
-    private final TransactionRepository transactionRepository;
+    ActivityOptions options = ActivityOptions.newBuilder()
+            .setStartToCloseTimeout(Duration.ofSeconds(60))
+            .build();
 
-    /**
-     * Aggregate transactions from all sources.
-     * @return number of new transactions saved
-     */
+    private final TransactionAggregatorActivity activity = Workflow.newActivityStub(TransactionAggregatorActivity.class, options);
+
+    @Override
     public int aggregate() {
-        log.info("Starting transaction aggregation from all sources...");
 
-        List<Transaction> allTransactions = new ArrayList<>();
-        allTransactions.addAll(bankAClient.fetchTransactions());
-        allTransactions.addAll(bankBClient.fetchTransactions());
+        int saveCount = 0;
+        List<Transaction> rawTransactions = new ArrayList<>();
 
-        int saved = 0;
-        for (Transaction tx : allTransactions) {
-            // Skip duplicates
-            if (transactionRepository.findByExternalIdAndSource(tx.getExternalId(), tx.getSource()).isPresent()) {
-                log.debug("Skipping duplicate: {} from {}", tx.getExternalId(), tx.getSource());
-                continue;
-            }
+        rawTransactions.addAll(activity.fetchBankBTransactions());
+        rawTransactions.addAll(activity.fetchBankATransactions());
 
-            // Normalise and categorise
-            normaliser.normalise(tx);
-            categoriser.categoriseAndSet(tx);
-
-            transactionRepository.save(tx);
-            saved++;
+        for (Transaction tx : rawTransactions) {
+        if (activity.isPresent(tx)) {
+            log.debug("Skipping duplicate: {} from {}", tx.getExternalId(), tx.getSource());
+            continue;
         }
-
-        log.info("Aggregation complete. {} new transactions saved.", saved);
-        return saved;
+            activity.normalise(tx);
+            activity.categorise(tx);
+            activity.save(tx);
+            saveCount ++;
+        }
+        return saveCount;
     }
 }
+
 
