@@ -58,6 +58,15 @@ public class TransactionAggregatorWorker {
                 )
         );
 
-        factory.start();
+        Thread workerThread = new Thread(() -> {
+            try {
+                factory.start();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to start Temporal worker", e);
+            }
+        });
+        workerThread.setDaemon(true);
+        workerThread.setName("temporal-worker-starter");
+        workerThread.start();
     }
 }
