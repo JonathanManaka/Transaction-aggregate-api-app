@@ -16,9 +16,11 @@ import org.example.transacaggrapiapp.repository.TransactionRepository;
 import org.example.transacaggrapiapp.source.MockBankAClient;
 import org.example.transacaggrapiapp.source.MockBankBClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnProperty(name = "temporal.worker.enabled", havingValue = "true", matchIfMissing = false)
 @RequiredArgsConstructor
 public class TransactionAggregatorWorker {
 

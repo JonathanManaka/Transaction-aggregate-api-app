@@ -1,3 +1,7 @@
+temporal:
+  worker:
+    enabled: false
+
 spring:
   datasource:
     url: will-be-overridden-by-service-connection
