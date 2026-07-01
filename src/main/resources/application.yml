@@ -26,6 +26,8 @@ temporal:
   service-address: ${TEMPORAL_HOST:localhost:7233}
   worker:
     enabled: true
+  schedule:
+    enabled: true
 
 server:
   port: 8080
