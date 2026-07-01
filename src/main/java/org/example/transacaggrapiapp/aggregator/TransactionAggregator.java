@@ -36,8 +36,8 @@ public class TransactionAggregator implements TransactionAggregatorWorkflow {
             log.debug("Skipping duplicate: {} from {}", tx.getExternalId(), tx.getSource());
             continue;
         }
-            activity.normalise(tx);
-            activity.categorise(tx);
+            tx = activity.normalise(tx);
+            tx = activity.categorise(tx);
             activity.save(tx);
             saveCount ++;
         }
