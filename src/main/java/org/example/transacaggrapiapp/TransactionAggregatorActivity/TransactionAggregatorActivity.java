@@ -12,9 +12,9 @@ public interface TransactionAggregatorActivity {
     List<Transaction> fetchBankATransactions();
     List<Transaction> fetchBankBTransactions();
 
-    void normalise(Transaction tx);
-    void categorise(Transaction tx);
-    void save(Transaction tx);
+    Transaction normalise(Transaction tx);
+    Transaction categorise(Transaction tx);
+    Long save(Transaction tx);
     Boolean isPresent(Transaction tx);
 
 }
