@@ -34,18 +34,18 @@ public class TransactionAggregatorActivityImpl implements TransactionAggregatorA
     }
 
     @Override
-    public void normalise(Transaction tx) {
-        normaliser.normalise(tx);
+    public Transaction normalise(Transaction tx) {
+        return normaliser.normalise(tx);
     }
 
     @Override
-    public void categorise(Transaction tx) {
-        categoriser.categoriseAndSet(tx);
+    public Transaction categorise(Transaction tx) {
+        return categoriser.categoriseAndSet(tx);
     }
 
     @Override
-    public void save(Transaction tx) {
-        transactionRepository.save(tx);
+    public Long save(Transaction tx) {
+        return transactionRepository.save(tx).getId();
     }
 
     @Override

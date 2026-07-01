@@ -1,6 +1,8 @@
 temporal:
   worker:
     enabled: false
+  schedule:
+    enabled: false
 
 spring:
   datasource:
