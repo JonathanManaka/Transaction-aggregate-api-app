@@ -63,6 +63,15 @@ public class MockBankAClient {
                         .currency("ZAR")
                         .transactionDate(LocalDateTime.now().minusDays(10))
                         .accountId("ACC-1001")
+                        .build(),
+                Transaction.builder()
+                        .externalId("BANKA-005")
+                        .source("BANK_A")
+                        .description("Salary Deposit")
+                        .amount(new BigDecimal("55000.00"))
+                        .currency("ZAR")
+                        .transactionDate(LocalDateTime.now().minusDays(10))
+                        .accountId("ACC-1001")
                         .build()
         );
     }
