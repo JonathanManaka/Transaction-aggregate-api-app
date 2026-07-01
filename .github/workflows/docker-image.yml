@@ -122,10 +122,21 @@ jobs:
           kustomize edit set image \
             mphojmanaka/transac-aggr-api-app=mphojmanaka/transac-aggr-api-app:${TAG}
 
-      - name: Commit & push
+      - name: Commit, push branch & open PR
+        env:
+          GH_TOKEN: ${{ secrets.GITOPS_PAT }}
         run: |
+          TAG="${GITHUB_SHA::7}"
+          BRANCH="deploy/transac-agg-api-${TAG}"
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -am "chore(dev): deploy transac-agg-api ${GITHUB_SHA::7}" \
-            || { echo "no tag change"; exit 0; }
-          git push
+          git checkout -b "$BRANCH"
+          git commit -am "chore(dev): deploy transac-agg-api ${TAG}" \
+            || { echo "no tag change, nothing to deploy"; exit 0; }
+          git push -u origin "$BRANCH"
+          gh pr create \
+            --repo JonathanManaka/Transaction-aggregate-api-gitops \
+            --base main \
+            --head "$BRANCH" \
+            --title "chore(dev): deploy transac-agg-api ${TAG}" \
+            --body "Automated image bump to \`${TAG}\` from ${{ github.repository }}@${GITHUB_SHA}."
