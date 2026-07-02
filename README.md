@@ -50,7 +50,8 @@ POST /api/source-transactions ─▶ source_transactions table
 | `GET`  | `/api/categories` | Category breakdown with counts. |
 | `GET`  | `/api/analytics` | Monthly spending trends. |
 | `GET`  | `/health` | Liveness check (used by K8s probes). |
-| `GET`  | `/actuator/**` | Spring Boot Actuator endpoints. |
+| `GET`  | `/actuator/health` | Actuator health endpoint. |
+| `GET`  | `/actuator/prometheus` | Prometheus-format metrics (for scraping). |
 | `GET`  | `/swagger-ui.html` | Interactive API documentation. |
 
 ### Example: insert source transactions then aggregate
