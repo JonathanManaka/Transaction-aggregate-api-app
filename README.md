@@ -122,7 +122,7 @@ App: <http://localhost:8080> · Swagger: <http://localhost:8080/swagger-ui.html>
 
 ### Option B – full stack with Temporal
 
-1. Start a local Temporal dev server (e.g. `temporal server start-dev`, frontend on `localhost:7233`).
+1. Start a local Temporal Service (see [Running a local Temporal Service](#running-a-local-temporal-service) below), with the frontend on `localhost:7233`.
 2. Run the app pointed at it (H2 for storage):
 
 ```bash
@@ -140,6 +140,36 @@ export POSTGRES_PASSWORD="postgres"
 export TEMPORAL_HOST="localhost:7233"
 ./mvnw spring-boot:run
 ```
+
+### Running a local Temporal Service
+
+For local development and testing you only need a lightweight Temporal Service. Two easy options:
+
+> ⚠️ The options below are for **local development only**.
+
+**1. Temporal CLI dev server (simplest)**
+
+Install the [Temporal CLI](https://docs.temporal.io/cli), then start an in-memory dev service (frontend on `7233`, Web UI on `8233`):
+
+```bash
+temporal server start-dev
+```
+
+Web UI: <http://localhost:8233>. This is ideal for local testing but is not intended for sustained production workloads.
+
+**2. Docker Compose (Postgres + Elasticsearch + UI)**
+
+Runs a full Temporal Service in containers, closer to a real deployment:
+
+```bash
+git clone https://github.com/temporalio/docker-compose.git
+cd docker-compose
+docker compose up
+```
+
+This exposes the Temporal gRPC frontend on `7233` and the Web UI on <http://localhost:8080>. The repo also includes alternative configurations (different databases, visibility stores, TLS) you can select with the corresponding compose file.
+
+> Note: the Docker Compose UI also uses port `8080` — the same port as this app. Run them on different hosts/ports, or map one of them elsewhere (e.g. run the app with `--server.port=8081`).
 
 ---
 
